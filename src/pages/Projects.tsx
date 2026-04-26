@@ -8,8 +8,22 @@ import { Briefcase, Wallet, Coins, Percent, LayoutGrid, List, MapPin, User } fro
 import { PageHeader, StatusBadge } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { Button } from "@/components/ui/button";
-import { projectMeta, projectSpendTrend, type ProjectStatus } from "@/data/mock";
+import { projectMeta, projectSpendTrend, type ProjectStatus, type ProjectRow } from "@/data/mock";
 import { useProjects } from "@/hooks/queries/useProjects";
+
+// Mock metadata is keyed by legacy mock IDs (p1..p7). The DB rows use UUIDs but
+// share the same `code`. Build a code → meta lookup so the cards still hydrate
+// while the metadata tables (manager, client, location, monthly trend) are not
+// yet in the schema.
+const META_BY_CODE: Record<string, { meta: typeof projectMeta[string]; trend: number[] }> = {
+  "RN1-AÏN":  { meta: projectMeta.p1, trend: projectSpendTrend.p1 },
+  "CW42-MED": { meta: projectMeta.p2, trend: projectSpendTrend.p2 },
+  "RN6-BLD":  { meta: projectMeta.p3, trend: projectSpendTrend.p3 },
+  "CW17-TIP": { meta: projectMeta.p4, trend: projectSpendTrend.p4 },
+  "RN5-BJA":  { meta: projectMeta.p5, trend: projectSpendTrend.p5 },
+  "RN18-CHL": { meta: projectMeta.p6, trend: projectSpendTrend.p6 },
+  "CW09-BOU": { meta: projectMeta.p7, trend: projectSpendTrend.p7 },
+};
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
