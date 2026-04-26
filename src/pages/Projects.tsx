@@ -175,7 +175,7 @@ export default function Projects() {
               </thead>
               <tbody>
                 {filtered.map((p) => {
-                  const m = projectMeta[p.id];
+                  const m = META_BY_CODE[p.code]?.meta;
                   const pct = (p.spent / p.budget) * 100;
                   return (
                     <tr key={p.id} className="border-b border-border/60 transition-colors hover:bg-muted/40">
@@ -183,8 +183,8 @@ export default function Projects() {
                         <div className="font-medium">{p.name}</div>
                         <div className="text-[11px] text-muted-foreground">{p.code}</div>
                       </td>
-                      <td className="px-3">{m.client}</td>
-                      <td className="px-3">{m.manager}</td>
+                      <td className="px-3">{m?.client ?? "—"}</td>
+                      <td className="px-3">{m?.manager ?? "—"}</td>
                       <td className="px-3 text-end font-mono-num">{formatDA(p.budget, { compact: true })}</td>
                       <td className="px-3 text-end font-mono-num">
                         <div>{formatDA(p.spent, { compact: true })}</div>
@@ -194,7 +194,7 @@ export default function Projects() {
                             style={{ width: `${Math.min(100, pct)}%` }} />
                         </div>
                       </td>
-                      <td className="px-3 text-end font-mono-num">{m.progress}%</td>
+                      <td className="px-3 text-end font-mono-num">{m?.progress ?? 0}%</td>
                       <td className="ps-3 text-end">
                         <StatusBadge status={p.status} label={t(`dashboard.status.${p.status}`)} />
                       </td>
@@ -210,12 +210,12 @@ export default function Projects() {
   );
 }
 
-function ProjectCard({ id }: { id: string }) {
+function ProjectCard({ project: p }: { project: ProjectRow }) {
   const { t } = useTranslation();
-  const p = projects.find((x) => x.id === id)!;
-  const m = projectMeta[id];
-  const pct = (p.spent / p.budget) * 100;
-  const trend = projectSpendTrend[id].map((v, i) => ({ i, v }));
+  const entry = META_BY_CODE[p.code];
+  const m = entry?.meta;
+  const pct = p.budget > 0 ? (p.spent / p.budget) * 100 : 0;
+  const trend = (entry?.trend ?? []).map((v, i) => ({ i, v }));
 
   return (
     <article className="group flex flex-col rounded-xl border border-border bg-card p-4 shadow-elev-sm transition hover:shadow-elev-md">
