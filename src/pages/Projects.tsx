@@ -143,7 +143,7 @@ export default function Projects() {
       <Section title={t("projects_page.list_title")}>
         {view === "grid" ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((p) => <ProjectCard key={p.id} id={p.id} />)}
+            {filtered.map((p) => <ProjectCard key={p.id} project={p} />)}
           </div>
         ) : (
           <div className="overflow-x-auto">
