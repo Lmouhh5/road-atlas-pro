@@ -549,5 +549,71 @@
       "phone": "Téléphone",
       "status": "Statut"
     }
+  },
+  "settings_page": {
+    "title": "Paramètres",
+    "subtitle": "Référentiel, seuils, affichage et export",
+    "tabs": {
+      "reference": "Données de référence",
+      "thresholds": "Seuils système",
+      "display": "Affichage",
+      "data": "Données & export"
+    },
+    "ref": {
+      "projects": "Projets",
+      "subcost": "Sous-centres de coût",
+      "categories": "Catégories de dépenses",
+      "employees": "Employés",
+      "machines": "Machines & véhicules",
+      "suppliers": "Fournisseurs",
+      "cash_holders": "Détenteurs de caisse",
+      "manage": "Gérer",
+      "items": "éléments",
+      "view": "Voir",
+      "add": "Ajouter",
+      "hint": "Modifier la liste utilisée dans tous les formulaires"
+    },
+    "thresholds": {
+      "fuel_title": "Anomalie carburant",
+      "fuel_desc": "Litres maximum par remplissage avant alerte",
+      "clearance_title": "Délai de régularisation",
+      "clearance_desc": "Jours avant qu'une avance soit en retard",
+      "trace_title": "Score de traçabilité minimum",
+      "trace_desc": "Niveau d'alerte pour saisies incomplètes",
+      "alerts_title": "Notifications d'alertes",
+      "alerts_desc": "Catégories pour lesquelles afficher des alertes",
+      "alerts_uncleared": "Avances non régularisées",
+      "alerts_proof": "Pièces manquantes",
+      "alerts_fuel": "Anomalies carburant",
+      "alerts_overdue": "Factures en retard"
+    },
+    "display": {
+      "language_title": "Langue par défaut",
+      "language_desc": "Langue utilisée au démarrage",
+      "currency_title": "Format de monnaie",
+      "currency_desc": "Affichage des montants",
+      "date_title": "Format de date",
+      "date_desc": "Format affiché dans les tableaux et graphiques",
+      "theme_title": "Thème",
+      "theme_desc": "Apparence claire ou sombre",
+      "theme_light": "Clair",
+      "theme_dark": "Sombre"
+    },
+    "data": {
+      "export_title": "Exporter toutes les données",
+      "export_desc": "Télécharger un fichier CSV de toutes les saisies",
+      "export_btn": "Exporter en CSV",
+      "report_title": "Format de rapport imprimable",
+      "report_desc": "Mise en page utilisée pour les rapports PDF",
+      "report_a4": "A4 portrait",
+      "report_a4l": "A4 paysage",
+      "report_letter": "Letter",
+      "reset_title": "Réinitialiser les données de démonstration",
+      "reset_desc": "Restaurer le jeu de données initial du prototype",
+      "reset_btn": "Réinitialiser",
+      "danger": "Zone sensible"
+    },
+    "save": "Enregistrer",
+    "saved": "Modifications enregistrées"
   }
 }

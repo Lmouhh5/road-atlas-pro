@@ -549,5 +549,71 @@
       "phone": "Phone",
       "status": "Status"
     }
+  },
+  "settings_page": {
+    "title": "Settings",
+    "subtitle": "Reference data, thresholds, display and export",
+    "tabs": {
+      "reference": "Reference data",
+      "thresholds": "System thresholds",
+      "display": "Display",
+      "data": "Data & export"
+    },
+    "ref": {
+      "projects": "Projects",
+      "subcost": "Sub-cost centers",
+      "categories": "Expense categories",
+      "employees": "Employees",
+      "machines": "Machines & vehicles",
+      "suppliers": "Suppliers",
+      "cash_holders": "Cash holders",
+      "manage": "Manage",
+      "items": "items",
+      "view": "View",
+      "add": "Add",
+      "hint": "Edit the list used across every form"
+    },
+    "thresholds": {
+      "fuel_title": "Fuel anomaly",
+      "fuel_desc": "Maximum liters per fill-up before alert",
+      "clearance_title": "Clearance deadline",
+      "clearance_desc": "Days before an advance becomes overdue",
+      "trace_title": "Minimum traceability score",
+      "trace_desc": "Warning level for incomplete entries",
+      "alerts_title": "Alert notifications",
+      "alerts_desc": "Categories to surface as alerts",
+      "alerts_uncleared": "Uncleared advances",
+      "alerts_proof": "Missing proofs",
+      "alerts_fuel": "Fuel anomalies",
+      "alerts_overdue": "Overdue invoices"
+    },
+    "display": {
+      "language_title": "Default language",
+      "language_desc": "Language used on startup",
+      "currency_title": "Currency format",
+      "currency_desc": "How amounts are displayed",
+      "date_title": "Date format",
+      "date_desc": "Format used in tables and charts",
+      "theme_title": "Theme",
+      "theme_desc": "Light or dark appearance",
+      "theme_light": "Light",
+      "theme_dark": "Dark"
+    },
+    "data": {
+      "export_title": "Export all data",
+      "export_desc": "Download a CSV file of every entry",
+      "export_btn": "Export CSV",
+      "report_title": "Printable report format",
+      "report_desc": "Page layout used for PDF reports",
+      "report_a4": "A4 portrait",
+      "report_a4l": "A4 landscape",
+      "report_letter": "Letter",
+      "reset_title": "Reset demo data",
+      "reset_desc": "Restore the initial prototype dataset",
+      "reset_btn": "Reset",
+      "danger": "Danger zone"
+    },
+    "save": "Save",
+    "saved": "Changes saved"
   }
 }

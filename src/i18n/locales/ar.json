@@ -549,5 +549,71 @@
       "phone": "الهاتف",
       "status": "الحالة"
     }
+  },
+  "settings_page": {
+    "title": "الإعدادات",
+    "subtitle": "البيانات المرجعية، العتبات، العرض والتصدير",
+    "tabs": {
+      "reference": "البيانات المرجعية",
+      "thresholds": "عتبات النظام",
+      "display": "العرض",
+      "data": "البيانات والتصدير"
+    },
+    "ref": {
+      "projects": "المشاريع",
+      "subcost": "مراكز التكلفة الفرعية",
+      "categories": "فئات المصاريف",
+      "employees": "الموظفون",
+      "machines": "الآلات والمركبات",
+      "suppliers": "الموردون",
+      "cash_holders": "حاملو الصندوق",
+      "manage": "إدارة",
+      "items": "عناصر",
+      "view": "عرض",
+      "add": "إضافة",
+      "hint": "تعديل القائمة المستخدمة في جميع النماذج"
+    },
+    "thresholds": {
+      "fuel_title": "شذوذ الوقود",
+      "fuel_desc": "الحد الأقصى للترات في كل تعبئة قبل التنبيه",
+      "clearance_title": "أجل التسوية",
+      "clearance_desc": "الأيام قبل أن تصبح السلفة متأخرة",
+      "trace_title": "الحد الأدنى لنقاط التتبع",
+      "trace_desc": "مستوى التنبيه للإدخالات غير المكتملة",
+      "alerts_title": "تنبيهات الإشعارات",
+      "alerts_desc": "الفئات التي يتم عرضها كتنبيهات",
+      "alerts_uncleared": "السلف غير المسواة",
+      "alerts_proof": "مستندات مفقودة",
+      "alerts_fuel": "شذوذ الوقود",
+      "alerts_overdue": "فواتير متأخرة"
+    },
+    "display": {
+      "language_title": "اللغة الافتراضية",
+      "language_desc": "اللغة المستخدمة عند التشغيل",
+      "currency_title": "تنسيق العملة",
+      "currency_desc": "طريقة عرض المبالغ",
+      "date_title": "تنسيق التاريخ",
+      "date_desc": "التنسيق المستخدم في الجداول والرسوم",
+      "theme_title": "المظهر",
+      "theme_desc": "فاتح أو داكن",
+      "theme_light": "فاتح",
+      "theme_dark": "داكن"
+    },
+    "data": {
+      "export_title": "تصدير جميع البيانات",
+      "export_desc": "تنزيل ملف CSV لجميع الإدخالات",
+      "export_btn": "تصدير CSV",
+      "report_title": "تنسيق التقرير المطبوع",
+      "report_desc": "تخطيط الصفحة المستخدم لتقارير PDF",
+      "report_a4": "A4 عمودي",
+      "report_a4l": "A4 أفقي",
+      "report_letter": "Letter",
+      "reset_title": "إعادة تعيين بيانات العرض",
+      "reset_desc": "استعادة مجموعة البيانات الأولية للنموذج",
+      "reset_btn": "إعادة تعيين",
+      "danger": "منطقة حساسة"
+    },
+    "save": "حفظ",
+    "saved": "تم حفظ التغييرات"
   }
 }
