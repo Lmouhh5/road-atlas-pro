@@ -14,32 +14,401 @@ export type Database = {
   }
   public: {
     Tables: {
+      alerts: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          message: string
+          resolved: boolean
+          resolved_at: string | null
+          severity: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          message: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          message?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      assets: {
+        Row: {
+          code: string | null
+          cost_month: number
+          created_at: string
+          fuel_month: number
+          hours_month: number
+          id: string
+          last_service: string | null
+          name: string
+          project_id: string | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          code?: string | null
+          cost_month?: number
+          created_at?: string
+          fuel_month?: number
+          hours_month?: number
+          id?: string
+          last_service?: string | null
+          name: string
+          project_id?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string | null
+          cost_month?: number
+          created_at?: string
+          fuel_month?: number
+          hours_month?: number
+          id?: string
+          last_service?: string | null
+          name?: string
+          project_id?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assets_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_financial_summary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      attendance: {
+        Row: {
+          attendance_date: string
+          created_at: string
+          employee_id: string | null
+          hours: number
+          id: string
+          note: string | null
+          project_id: string | null
+          status: string
+        }
+        Insert: {
+          attendance_date?: string
+          created_at?: string
+          employee_id?: string | null
+          hours?: number
+          id?: string
+          note?: string | null
+          project_id?: string | null
+          status?: string
+        }
+        Update: {
+          attendance_date?: string
+          created_at?: string
+          employee_id?: string | null
+          hours?: number
+          id?: string
+          note?: string | null
+          project_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_financial_summary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_holders: {
+        Row: {
+          balance: number
+          created_at: string
+          id: string
+          name: string
+          role: string | null
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          id?: string
+          name: string
+          role?: string | null
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          id?: string
+          name?: string
+          role?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cash_issues: {
+        Row: {
+          amount: number
+          created_at: string
+          holder_id: string | null
+          id: string
+          issue_date: string
+          note: string | null
+          request_id: string | null
+          source: string | null
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          holder_id?: string | null
+          id?: string
+          issue_date?: string
+          note?: string | null
+          request_id?: string | null
+          source?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          holder_id?: string | null
+          id?: string
+          issue_date?: string
+          note?: string | null
+          request_id?: string | null
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_issues_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "cash_holders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_issues_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "cash_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_requests: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          project_id: string | null
+          purpose: string | null
+          request_date: string
+          requester_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          purpose?: string | null
+          request_date?: string
+          requester_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          project_id?: string | null
+          purpose?: string | null
+          request_date?: string
+          requester_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_financial_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      employees: {
+        Row: {
+          base_salary: number
+          cash_held: number
+          created_at: string
+          days_worked_month: number
+          hire_date: string | null
+          id: string
+          name: string
+          phone: string | null
+          project_id: string | null
+          role: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          base_salary?: number
+          cash_held?: number
+          created_at?: string
+          days_worked_month?: number
+          hire_date?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          project_id?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          base_salary?: number
+          cash_held?: number
+          created_at?: string
+          days_worked_month?: number
+          hire_date?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          project_id?: string | null
+          role?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "employees_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "employees_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_financial_summary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expenses: {
         Row: {
           amount: number
           category: string | null
           created_at: string
+          description: string | null
+          employee_id: string | null
+          expense_date: string
           id: string
+          method: string | null
           note: string | null
           project_id: string | null
+          proof_url: string | null
+          supplier_id: string | null
         }
         Insert: {
           amount?: number
           category?: string | null
           created_at?: string
+          description?: string | null
+          employee_id?: string | null
+          expense_date?: string
           id?: string
+          method?: string | null
           note?: string | null
           project_id?: string | null
+          proof_url?: string | null
+          supplier_id?: string | null
         }
         Update: {
           amount?: number
           category?: string | null
           created_at?: string
+          description?: string | null
+          employee_id?: string | null
+          expense_date?: string
           id?: string
+          method?: string | null
           note?: string | null
           project_id?: string | null
+          proof_url?: string | null
+          supplier_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "expenses_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "employees"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "expenses_project_id_fkey"
             columns: ["project_id"]
@@ -49,6 +418,64 @@ export type Database = {
           },
           {
             foreignKeyName: "expenses_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_financial_summary"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payroll_runs: {
+        Row: {
+          created_at: string
+          gross_amount: number
+          id: string
+          net_amount: number
+          note: string | null
+          period_month: string
+          project_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          note?: string | null
+          period_month: string
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          gross_amount?: number
+          id?: string
+          net_amount?: number
+          note?: string | null
+          period_month?: string
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payroll_runs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payroll_runs_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "v_project_financial_summary"
@@ -91,6 +518,134 @@ export type Database = {
           name?: string
           start_date?: string | null
           status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      revenue_invoices: {
+        Row: {
+          amount: number
+          client: string
+          created_at: string
+          due_date: string | null
+          id: string
+          invoice_number: string | null
+          issued_date: string
+          paid_amount: number
+          project_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          client: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          issued_date?: string
+          paid_amount?: number
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          client?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string | null
+          issued_date?: string
+          paid_amount?: number
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenue_invoices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "revenue_invoices_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "v_project_financial_summary"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      revenue_receipts: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          invoice_id: string | null
+          method: string | null
+          note: string | null
+          receipt_date: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          method?: string | null
+          note?: string | null
+          receipt_date?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          method?: string | null
+          note?: string | null
+          receipt_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "revenue_receipts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "revenue_invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      suppliers: {
+        Row: {
+          balance: number
+          category: string | null
+          contact: string | null
+          created_at: string
+          id: string
+          name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          category?: string | null
+          contact?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          category?: string | null
+          contact?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string | null
           updated_at?: string
         }
         Relationships: []
