@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  expenses, projects, suppliers, expenseCategoryKeys,
-  type ExpenseCategory, type PaymentMethod, type ProofStatus,
-} from "@/data/mock";
+import { expenseCategoryKeys, type ExpenseCategory, type PaymentMethod, type ProofStatus } from "@/data/mock";
+import { useExpenses } from "@/hooks/queries/useExpenses";
+import { useSuppliers } from "@/hooks/queries/useSuppliers";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
