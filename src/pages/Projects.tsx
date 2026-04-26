@@ -8,7 +8,22 @@ import { Briefcase, Wallet, Coins, Percent, LayoutGrid, List, MapPin, User } fro
 import { PageHeader, StatusBadge } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { Button } from "@/components/ui/button";
-import { projects, projectMeta, projectSpendTrend, type ProjectStatus } from "@/data/mock";
+import { projectMeta, projectSpendTrend, type ProjectStatus, type ProjectRow } from "@/data/mock";
+import { useProjects } from "@/hooks/queries/useProjects";
+
+// Mock metadata is keyed by legacy mock IDs (p1..p7). The DB rows use UUIDs but
+// share the same `code`. Build a code → meta lookup so the cards still hydrate
+// while the metadata tables (manager, client, location, monthly trend) are not
+// yet in the schema.
+const META_BY_CODE: Record<string, { meta: typeof projectMeta[string]; trend: number[] }> = {
+  "RN1-AÏN":  { meta: projectMeta.p1, trend: projectSpendTrend.p1 },
+  "CW42-MED": { meta: projectMeta.p2, trend: projectSpendTrend.p2 },
+  "RN6-BLD":  { meta: projectMeta.p3, trend: projectSpendTrend.p3 },
+  "CW17-TIP": { meta: projectMeta.p4, trend: projectSpendTrend.p4 },
+  "RN5-BJA":  { meta: projectMeta.p5, trend: projectSpendTrend.p5 },
+  "RN18-CHL": { meta: projectMeta.p6, trend: projectSpendTrend.p6 },
+  "CW09-BOU": { meta: projectMeta.p7, trend: projectSpendTrend.p7 },
+};
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -28,17 +43,20 @@ export default function Projects() {
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">("all");
   const [view, setView] = useState<"grid" | "table">("grid");
 
+  const { data: projects = [] } = useProjects();
+
   const filtered = useMemo(
     () => (statusFilter === "all" ? projects : projects.filter((p) => p.status === statusFilter)),
-    [statusFilter],
+    [statusFilter, projects],
   );
 
   const kpi = useMemo(() => {
+    if (projects.length === 0) return { count: 0, totalBudget: 0, totalSpent: 0, avgMargin: 0 };
     const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
     const totalSpent  = projects.reduce((s, p) => s + p.spent, 0);
     const avgMargin = projects.reduce((s, p) => s + p.margin, 0) / projects.length;
     return { count: projects.length, totalBudget, totalSpent, avgMargin };
-  }, []);
+  }, [projects]);
 
   const consumptionData = filtered.map((p) => ({
     name: p.code, full: p.name,
@@ -139,7 +157,7 @@ export default function Projects() {
       <Section title={t("projects_page.list_title")}>
         {view === "grid" ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {filtered.map((p) => <ProjectCard key={p.id} id={p.id} />)}
+            {filtered.map((p) => <ProjectCard key={p.id} project={p} />)}
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -157,7 +175,7 @@ export default function Projects() {
               </thead>
               <tbody>
                 {filtered.map((p) => {
-                  const m = projectMeta[p.id];
+                  const m = META_BY_CODE[p.code]?.meta;
                   const pct = (p.spent / p.budget) * 100;
                   return (
                     <tr key={p.id} className="border-b border-border/60 transition-colors hover:bg-muted/40">
@@ -165,8 +183,8 @@ export default function Projects() {
                         <div className="font-medium">{p.name}</div>
                         <div className="text-[11px] text-muted-foreground">{p.code}</div>
                       </td>
-                      <td className="px-3">{m.client}</td>
-                      <td className="px-3">{m.manager}</td>
+                      <td className="px-3">{m?.client ?? "—"}</td>
+                      <td className="px-3">{m?.manager ?? "—"}</td>
                       <td className="px-3 text-end font-mono-num">{formatDA(p.budget, { compact: true })}</td>
                       <td className="px-3 text-end font-mono-num">
                         <div>{formatDA(p.spent, { compact: true })}</div>
@@ -176,7 +194,7 @@ export default function Projects() {
                             style={{ width: `${Math.min(100, pct)}%` }} />
                         </div>
                       </td>
-                      <td className="px-3 text-end font-mono-num">{m.progress}%</td>
+                      <td className="px-3 text-end font-mono-num">{m?.progress ?? 0}%</td>
                       <td className="ps-3 text-end">
                         <StatusBadge status={p.status} label={t(`dashboard.status.${p.status}`)} />
                       </td>
@@ -192,12 +210,12 @@ export default function Projects() {
   );
 }
 
-function ProjectCard({ id }: { id: string }) {
+function ProjectCard({ project: p }: { project: ProjectRow }) {
   const { t } = useTranslation();
-  const p = projects.find((x) => x.id === id)!;
-  const m = projectMeta[id];
-  const pct = (p.spent / p.budget) * 100;
-  const trend = projectSpendTrend[id].map((v, i) => ({ i, v }));
+  const entry = META_BY_CODE[p.code];
+  const m = entry?.meta;
+  const pct = p.budget > 0 ? (p.spent / p.budget) * 100 : 0;
+  const trend = (entry?.trend ?? []).map((v, i) => ({ i, v }));
 
   return (
     <article className="group flex flex-col rounded-xl border border-border bg-card p-4 shadow-elev-sm transition hover:shadow-elev-md">
@@ -211,9 +229,9 @@ function ProjectCard({ id }: { id: string }) {
 
       <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-[11px]">
         <dt className="flex items-center gap-1 text-muted-foreground"><User   className="h-3 w-3" />{t("common2.manager")}</dt>
-        <dd className="text-end font-medium">{m.manager}</dd>
+        <dd className="text-end font-medium">{m?.manager ?? "—"}</dd>
         <dt className="flex items-center gap-1 text-muted-foreground"><MapPin className="h-3 w-3" />{t("common2.location")}</dt>
-        <dd className="text-end font-medium">{m.location}</dd>
+        <dd className="text-end font-medium">{m?.location ?? "—"}</dd>
       </dl>
 
       <div className="mt-3">
