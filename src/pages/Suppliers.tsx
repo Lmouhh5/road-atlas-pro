@@ -7,7 +7,10 @@ import {
 import { Building2, Wallet, AlertCircle, Clock, Users } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { suppliers, supplierMeta, expenses, type SupplierStatus } from "@/data/mock";
+import { useSuppliers, type SupplierRow } from "@/hooks/queries/useSuppliers";
+import { useExpenses } from "@/hooks/queries/useExpenses";
+
+type SupplierStatus = SupplierRow["status"];
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -33,42 +36,49 @@ const PIE_COLORS = [
 
 export default function Suppliers() {
   const { t } = useTranslation();
+  const { data: suppliers = [] } = useSuppliers();
+  const { data: expenses = [] } = useExpenses();
   const [statusFilter, setStatusFilter] = useState<SupplierStatus | "all">("all");
+
+  // Aggregate supplier spend from expenses
+  const enriched = useMemo(() => {
+    const spend = new Map<string, number>();
+    for (const e of expenses) spend.set(e.supplierId, (spend.get(e.supplierId) ?? 0) + e.amount);
+    return suppliers.map((s) => ({ ...s, totalSpend: spend.get(s.id) ?? 0 }));
+  }, [suppliers, expenses]);
 
   const rows = useMemo(
     () =>
-      suppliers
-        .map((s) => ({ ...s, ...supplierMeta[s.id] }))
+      enriched
         .filter((r) => statusFilter === "all" || r.status === statusFilter)
         .sort((a, b) => b.totalSpend - a.totalSpend),
-    [statusFilter],
+    [enriched, statusFilter],
   );
 
   const kpi = useMemo(() => {
-    const list = suppliers.map((s) => supplierMeta[s.id]);
     return {
-      active: list.length,
-      spend: list.reduce((s, x) => s + x.totalSpend, 0),
-      outstanding: list.reduce((s, x) => s + x.outstanding, 0),
-      overdue: list.filter((x) => x.status === "overdue").length,
-      avgTerms: Math.round(list.reduce((s, x) => s + x.paymentTerms, 0) / list.length),
+      active: enriched.length,
+      spend: enriched.reduce((s, x) => s + x.totalSpend, 0),
+      outstanding: enriched.reduce((s, x) => s + x.outstanding, 0),
+      overdue: enriched.filter((x) => x.status === "overdue").length,
+      avgTerms: enriched.length ? Math.round(enriched.reduce((s, x) => s + x.paymentTerms, 0) / enriched.length) : 0,
     };
-  }, []);
+  }, [enriched]);
 
   const topData = useMemo(
     () =>
-      [...suppliers]
-        .map((s) => ({ name: s.name, spend: supplierMeta[s.id].totalSpend }))
-        .sort((a, b) => b.spend - a.spend)
-        .slice(0, 8),
-    [],
+      [...enriched]
+        .sort((a, b) => b.totalSpend - a.totalSpend)
+        .slice(0, 8)
+        .map((s) => ({ name: s.name, spend: s.totalSpend })),
+    [enriched],
   );
 
   const categoryData = useMemo(() => {
     const totals: Record<string, number> = {};
     for (const e of expenses) totals[e.category] = (totals[e.category] ?? 0) + e.amount;
     return Object.entries(totals).map(([key, value]) => ({ key, value }));
-  }, []);
+  }, [expenses]);
 
   return (
     <div className="space-y-5">

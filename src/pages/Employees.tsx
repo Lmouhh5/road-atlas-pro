@@ -7,7 +7,9 @@ import {
 import { Users, UserCheck, Wallet, Coins, AlertCircle } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { employeeRoster, projects, type EmployeeStatus } from "@/data/mock";
+import { type EmployeeStatus } from "@/data/mock";
+import { useEmployees } from "@/hooks/queries/useEmployees";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -33,11 +35,13 @@ const PIE_COLORS = [
 
 export default function Employees() {
   const { t } = useTranslation();
+  const { data: employeeRoster = [] } = useEmployees();
+  const { data: projects = [] } = useProjectsList();
   const [statusFilter, setStatusFilter] = useState<EmployeeStatus | "all">("all");
 
   const filtered = useMemo(
     () => (statusFilter === "all" ? employeeRoster : employeeRoster.filter((e) => e.status === statusFilter)),
-    [statusFilter],
+    [statusFilter, employeeRoster],
   );
 
   const kpi = useMemo(() => {
@@ -47,13 +51,13 @@ export default function Employees() {
     const cash       = employeeRoster.reduce((s, e) => s + e.cashHeld, 0);
     const uncleared  = employeeRoster.filter((e) => e.cashHeld > 0).length;
     return { headcount, active, payroll, cash, uncleared };
-  }, []);
+  }, [employeeRoster]);
 
   const byRole = useMemo(() => {
     const totals: Record<string, number> = {};
     for (const e of employeeRoster) totals[e.role] = (totals[e.role] ?? 0) + 1;
     return Object.entries(totals).map(([role, count]) => ({ role, count }));
-  }, []);
+  }, [employeeRoster]);
 
   const byProject = useMemo(() => {
     const totals: Record<string, number> = {};
@@ -62,7 +66,7 @@ export default function Employees() {
       totals[e.projectId] = (totals[e.projectId] ?? 0) + 1;
     }
     return projects.map((p) => ({ name: p.code, full: p.name, count: totals[p.id] ?? 0 }));
-  }, []);
+  }, [employeeRoster, projects]);
 
   return (
     <div className="space-y-5">
