@@ -13,7 +13,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { invoices, monthlyRevenue, projects, type InvoiceStatus } from "@/data/mock";
+import { monthlyRevenue, type InvoiceStatus } from "@/data/mock";
+import { useInvoices } from "@/hooks/queries/useInvoices";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +37,8 @@ const STATUS_TONE: Record<InvoiceStatus, string> = {
 
 export default function Revenue() {
   const { t } = useTranslation();
+  const { data: invoices = [] } = useInvoices();
+  const { data: projects = [] } = useProjectsList();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "all">("all");
   const [client, setClient] = useState<string>("all");
