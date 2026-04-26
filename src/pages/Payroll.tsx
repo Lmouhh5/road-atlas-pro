@@ -13,10 +13,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  payrollLines, monthlyPayroll, projects,
-  type PayrollStatus,
-} from "@/data/mock";
+import { monthlyPayroll, type PayrollStatus } from "@/data/mock";
+import { usePayrollLines } from "@/hooks/queries/usePayroll";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +36,8 @@ const STATUS_TONE: Record<PayrollStatus, string> = {
 
 export default function Payroll() {
   const { t } = useTranslation();
+  const { data: payrollLines = [] } = usePayrollLines();
+  const { data: projects = [] } = useProjectsList();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<PayrollStatus | "all">("all");
   const [project, setProject] = useState<string>("all");
@@ -51,7 +52,7 @@ export default function Payroll() {
         if (q && !`${l.name} ${l.role} ${projectCode(l.projectId)}`.toLowerCase().includes(q.toLowerCase())) return false;
         return true;
       }),
-    [status, project, q],
+    [status, project, q, payrollLines, projects],
   );
 
   const kpi = useMemo(() => {
@@ -60,7 +61,7 @@ export default function Payroll() {
     const bonuses = payrollLines.reduce((s, l) => s + l.bonuses, 0);
     const advances = payrollLines.reduce((s, l) => s + l.advances, 0);
     return { gross, net, bonuses, advances };
-  }, []);
+  }, [payrollLines]);
 
   const trend = useMemo(
     () =>
@@ -79,7 +80,7 @@ export default function Payroll() {
     return [...map.entries()]
       .map(([id, value]) => ({ code: projectCode(id), value }))
       .sort((a, b) => b.value - a.value);
-  }, []);
+  }, [payrollLines, projects]);
 
   const totals = useMemo(() => {
     return filtered.reduce(
