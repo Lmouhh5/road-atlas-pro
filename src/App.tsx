@@ -19,6 +19,7 @@ import Attendance from "./pages/Attendance";
 import Machines from "./pages/Machines";
 import Suppliers from "./pages/Suppliers";
 import Employees from "./pages/Employees";
+import Settings from "./pages/Settings";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +44,7 @@ const App = () => (
             <Route path="/reports"    element={<Reports />} />
             <Route path="/alerts"     element={<Alerts />} />
             <Route path="/data-entry" element={<DataEntry />} />
-            <Route path="/settings"   element={<Placeholder titleKey="nav.settings" />} />
+            <Route path="/settings"   element={<Settings />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
