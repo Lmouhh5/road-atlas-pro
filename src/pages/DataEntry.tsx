@@ -15,9 +15,14 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import {
-  projects, suppliers, employees, expenseCategoryKeys, recentActivity,
-} from "@/data/mock";
+import { expenseCategoryKeys, recentActivity } from "@/data/mock";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
+import { useSuppliers } from "@/hooks/queries/useSuppliers";
+import { useEmployees } from "@/hooks/queries/useEmployees";
+import { useInsertExpense } from "@/hooks/queries/useExpenses";
+import { useInsertInvoice } from "@/hooks/queries/useInvoices";
+import { useInsertCashIssue } from "@/hooks/queries/useCash";
+import { useInsertAttendance } from "@/hooks/queries/useAttendance";
 import { formatDA, formatRelativeDays } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -27,10 +32,60 @@ export default function DataEntry() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [tab, setTab] = useState("expense");
+  const { data: projects = [] } = useProjectsList();
+  const { data: suppliers = [] } = useSuppliers();
+  const { data: employees = [] } = useEmployees();
+  const insertExpense = useInsertExpense();
+  const insertInvoice = useInsertInvoice();
+  const insertCash = useInsertCashIssue();
+  const insertAttendance = useInsertAttendance();
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: t("data_entry.form.saved"), description: t(`data_entry.tabs.${tab}`) });
+    const form = e.currentTarget as HTMLFormElement;
+    const fd = new FormData(form);
+    const get = (k: string) => (fd.get(k) as string) || "";
+    const num = (k: string) => Number(fd.get(k) || 0);
+    try {
+      if (tab === "expense") {
+        await insertExpense.mutateAsync({
+          expense_date: get("date") || new Date().toISOString().slice(0, 10),
+          amount: num("amount"),
+          project_id: get("project") || null,
+          category: get("category") || null,
+          supplier_id: get("supplier") || null,
+          method: get("method") || null,
+          description: get("description") || null,
+        });
+      } else if (tab === "revenue") {
+        await insertInvoice.mutateAsync({
+          client: get("client") || "—",
+          amount: num("amount"),
+          invoice_number: get("invoice") || undefined,
+          issued_date: get("date") || undefined,
+          project_id: get("project") || null,
+        });
+      } else if (tab === "cash") {
+        await insertCash.mutateAsync({
+          issue_date: get("date") || undefined,
+          amount: num("amount"),
+          holder_id: get("holder") || null,
+          note: get("description") || undefined,
+        });
+      } else if (tab === "attendance") {
+        await insertAttendance.mutateAsync({
+          attendance_date: get("date") || undefined,
+          project_id: get("project") || null,
+          employee_id: get("manager") || null,
+          hours: num("team") || 0,
+          note: get("description") || undefined,
+        });
+      }
+      toast({ title: t("data_entry.form.saved"), description: t(`data_entry.tabs.${tab}`) });
+      form.reset();
+    } catch (err) {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    }
   };
 
   const todaySummary = useMemo(() => {
