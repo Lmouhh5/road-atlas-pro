@@ -424,5 +424,130 @@
     "absent": "Absent",
     "leave": "Congé",
     "rest": "Repos"
+  },
+  "machines_page": {
+    "title": "Machines & Véhicules",
+    "subtitle": "Suivi de la flotte — heures, carburant, réparations, utilisation",
+    "kpi": {
+      "fleet": "Flotte active",
+      "fuel_cost": "Coût carburant (mois)",
+      "repair_cost": "Coût réparations (mois)",
+      "utilization": "Utilisation moy.",
+      "downtime": "Engins en panne"
+    },
+    "filter": {
+      "all": "Tout",
+      "active": "Actif",
+      "idle": "Inactif",
+      "repair": "En réparation"
+    },
+    "fuel_trend_title": "Consommation carburant — 30 jours",
+    "fuel_trend_sub": "Litres / jour — top engins",
+    "cost_rank_title": "Coûts par engin — ce mois",
+    "cost_rank_sub": "Carburant + réparations (DA)",
+    "list_title": "Flotte — détail",
+    "kind": {
+      "truck": "Camion",
+      "excavator": "Pelle",
+      "loader": "Chargeuse",
+      "roller": "Compacteur",
+      "grader": "Niveleuse",
+      "paver": "Finisseur",
+      "pickup": "Pickup"
+    },
+    "status": {
+      "active": "Actif",
+      "idle": "Inactif",
+      "repair": "En réparation"
+    },
+    "col": {
+      "machine": "Engin",
+      "kind": "Type",
+      "project": "Projet",
+      "hours": "Heures",
+      "fuel_l": "Carburant (L)",
+      "fuel_cost": "Coût carb.",
+      "repair": "Réparations",
+      "utilization": "Utilisation",
+      "status": "Statut",
+      "last_service": "Dernière révision"
+    }
+  },
+  "suppliers_page": {
+    "title": "Fournisseurs",
+    "subtitle": "Achats, encours et conditions de paiement",
+    "kpi": {
+      "active": "Fournisseurs actifs",
+      "spend": "Dépenses (90j)",
+      "outstanding": "Encours total",
+      "overdue": "Fournisseurs en retard",
+      "avg_terms": "Délai moy. (j)"
+    },
+    "filter": {
+      "all": "Tout",
+      "ok": "À jour",
+      "balance": "Solde",
+      "overdue": "En retard"
+    },
+    "top_title": "Top fournisseurs — dépenses 90j",
+    "top_sub": "Cliquer pour filtrer la liste",
+    "category_title": "Mix par catégorie",
+    "category_sub": "Répartition des dépenses",
+    "list_title": "Fournisseurs",
+    "status": {
+      "ok": "À jour",
+      "balance": "Solde",
+      "overdue": "En retard"
+    },
+    "col": {
+      "name": "Fournisseur",
+      "category": "Catégorie",
+      "city": "Ville",
+      "spend": "Dépenses",
+      "outstanding": "Encours",
+      "invoices": "Factures",
+      "last": "Dernière facture",
+      "terms": "Délai",
+      "status": "Statut",
+      "contact": "Contact"
+    }
+  },
+  "employees_page": {
+    "title": "Employés",
+    "subtitle": "Effectifs, affectations et trésorerie en main",
+    "kpi": {
+      "headcount": "Effectif total",
+      "active": "En activité",
+      "payroll": "Masse salariale (mois)",
+      "cash": "Trésorerie en main",
+      "uncleared": "Avances ouvertes"
+    },
+    "filter": {
+      "all": "Tous",
+      "active": "Actif",
+      "leave": "Congé",
+      "inactive": "Inactif"
+    },
+    "by_role_title": "Effectif par fonction",
+    "by_role_sub": "Répartition de la main d'œuvre",
+    "by_project_title": "Effectif par projet",
+    "by_project_sub": "Affectations actuelles",
+    "list_title": "Roster",
+    "status": {
+      "active": "Actif",
+      "leave": "Congé",
+      "inactive": "Inactif"
+    },
+    "col": {
+      "name": "Nom",
+      "role": "Fonction",
+      "project": "Projet",
+      "hire": "Embauche",
+      "days": "Jours travaillés",
+      "salary": "Salaire base",
+      "cash": "Trésorerie",
+      "phone": "Téléphone",
+      "status": "Statut"
+    }
   }
 }
