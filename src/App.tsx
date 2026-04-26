@@ -16,6 +16,9 @@ import Reports from "./pages/Reports";
 import Alerts from "./pages/Alerts";
 import Payroll from "./pages/Payroll";
 import Attendance from "./pages/Attendance";
+import Machines from "./pages/Machines";
+import Suppliers from "./pages/Suppliers";
+import Employees from "./pages/Employees";
 
 const queryClient = new QueryClient();
 
@@ -34,9 +37,9 @@ const App = () => (
             <Route path="/payroll"    element={<Payroll />} />
             <Route path="/attendance" element={<Attendance />} />
             <Route path="/projects"   element={<Projects />} />
-            <Route path="/machines"   element={<Placeholder titleKey="nav.machines" />} />
-            <Route path="/suppliers"  element={<Placeholder titleKey="nav.suppliers" />} />
-            <Route path="/employees"  element={<Placeholder titleKey="nav.employees" />} />
+            <Route path="/machines"   element={<Machines />} />
+            <Route path="/suppliers"  element={<Suppliers />} />
+            <Route path="/employees"  element={<Employees />} />
             <Route path="/reports"    element={<Reports />} />
             <Route path="/alerts"     element={<Alerts />} />
             <Route path="/data-entry" element={<DataEntry />} />

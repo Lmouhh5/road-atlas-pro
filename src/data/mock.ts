@@ -476,3 +476,113 @@ export const todayAttendance: DailyAttendanceRow[] = [
   { employeeId: "e11", name: "Omar Ferhat",     role: "Maçon",           projectId: "p3", status: "absent",  hours: 0 },
   { employeeId: "e12", name: "Djamel Aliouane", role: "Soudeur",         projectId: "p2", status: "present", hours: 9, checkIn: "07:00", checkOut: "16:35" },
 ];
+/* ---------- Machines & Vehicles ---------- */
+
+export type MachineKind = "truck" | "excavator" | "loader" | "roller" | "grader" | "paver" | "pickup";
+export type MachineStatus = "active" | "idle" | "repair";
+
+export interface Machine {
+  id: string;
+  code: string;
+  name: string;
+  kind: MachineKind;
+  projectId: string;
+  status: MachineStatus;
+  hoursMonth: number;
+  fuelMonth: number;     // liters
+  fuelCostMonth: number; // DA
+  repairCostMonth: number;
+  utilization: number;   // 0-100
+  odometer: number;      // km or hours total
+  lastService: string;   // ISO
+}
+
+export const machines: Machine[] = [
+  { id: "m1",  code: "CAM-21", name: "Camion benne 8x4 — Mercedes 4140", kind: "truck",     projectId: "p1", status: "active", hoursMonth: 188, fuelMonth: 2840, fuelCostMonth: 1_134_000, repairCostMonth: 142_000, utilization: 88, odometer: 184_300, lastService: d(12) },
+  { id: "m2",  code: "PEL-07", name: "Pelle hydraulique — Cat 320D",     kind: "excavator", projectId: "p3", status: "active", hoursMonth: 162, fuelMonth: 2210, fuelCostMonth:   882_000, repairCostMonth:  68_000, utilization: 76, odometer:  9_840, lastService: d(20) },
+  { id: "m3",  code: "FIN-02", name: "Finisseur — Vögele Super 1800",     kind: "paver",     projectId: "p5", status: "repair", hoursMonth:  44, fuelMonth:  610, fuelCostMonth:   244_000, repairCostMonth: 712_000, utilization: 21, odometer:  6_120, lastService: d(2)  },
+  { id: "m4",  code: "COM-14", name: "Compacteur — Bomag BW 174",         kind: "roller",    projectId: "p1", status: "active", hoursMonth: 152, fuelMonth:  980, fuelCostMonth:   392_000, repairCostMonth:  31_000, utilization: 71, odometer:  4_870, lastService: d(28) },
+  { id: "m5",  code: "CHA-09", name: "Chargeuse — Volvo L120",            kind: "loader",    projectId: "p2", status: "active", hoursMonth: 144, fuelMonth: 1620, fuelCostMonth:   648_000, repairCostMonth:  88_000, utilization: 67, odometer: 11_240, lastService: d(34) },
+  { id: "m6",  code: "NIV-03", name: "Niveleuse — Cat 140K",              kind: "grader",    projectId: "p7", status: "active", hoursMonth: 128, fuelMonth: 1380, fuelCostMonth:   552_000, repairCostMonth:  46_000, utilization: 60, odometer:  7_960, lastService: d(40) },
+  { id: "m7",  code: "CAM-22", name: "Camion benne 6x4 — Sonacom",        kind: "truck",     projectId: "p4", status: "idle",   hoursMonth:  62, fuelMonth:  720, fuelCostMonth:   288_000, repairCostMonth: 388_000, utilization: 29, odometer: 212_400, lastService: d(7)  },
+  { id: "m8",  code: "PEL-08", name: "Pelle — Komatsu PC210",             kind: "excavator", projectId: "p7", status: "active", hoursMonth: 174, fuelMonth: 2380, fuelCostMonth:   952_000, repairCostMonth:  54_000, utilization: 81, odometer:  8_120, lastService: d(18) },
+  { id: "m9",  code: "COM-15", name: "Compacteur — Hamm 3411",            kind: "roller",    projectId: "p2", status: "active", hoursMonth: 138, fuelMonth:  860, fuelCostMonth:   344_000, repairCostMonth:  28_000, utilization: 64, odometer:  3_640, lastService: d(22) },
+  { id: "m10", code: "PIC-04", name: "Pickup — Toyota Hilux",             kind: "pickup",    projectId: "p6", status: "active", hoursMonth: 156, fuelMonth:  610, fuelCostMonth:   244_000, repairCostMonth:  18_000, utilization: 58, odometer:  64_200, lastService: d(45) },
+  { id: "m11", code: "CAM-23", name: "Camion citerne eau — Renault",      kind: "truck",     projectId: "p5", status: "active", hoursMonth: 132, fuelMonth: 1280, fuelCostMonth:   512_000, repairCostMonth:  62_000, utilization: 62, odometer: 138_900, lastService: d(30) },
+  { id: "m12", code: "FIN-03", name: "Finisseur — Dynapac F1700",         kind: "paver",     projectId: "p1", status: "active", hoursMonth: 118, fuelMonth: 1420, fuelCostMonth:   568_000, repairCostMonth:  74_000, utilization: 55, odometer:  5_240, lastService: d(38) },
+];
+
+/** 30-day fuel consumption (liters) — top 4 machines */
+export const fuelTrend = Array.from({ length: 30 }, (_, i) => {
+  const day = 29 - i;
+  const date = d(day).slice(5, 10);
+  const base = 90 + Math.sin(i / 4) * 18;
+  return {
+    date,
+    "CAM-21": Math.round(base + Math.cos(i / 3) * 12 + (i % 7 === 0 ? 14 : 0)),
+    "PEL-07": Math.round(base * 0.78 + Math.sin(i / 2) * 9),
+    "PEL-08": Math.round(base * 0.84 + Math.cos(i / 2) * 10),
+    "CHA-09": Math.round(base * 0.62 + Math.sin(i / 5) * 8),
+  };
+});
+
+/* ---------- Supplier extended metadata ---------- */
+
+export type SupplierStatus = "ok" | "balance" | "overdue";
+
+export interface SupplierMeta {
+  id: string;
+  totalSpend: number;       // DA last 90 days
+  outstanding: number;      // DA unpaid
+  invoicesCount: number;
+  lastInvoice: string;      // ISO
+  paymentTerms: number;     // days
+  status: SupplierStatus;
+  city: string;
+  contact: string;
+}
+
+export const supplierMeta: Record<string, SupplierMeta> = {
+  s1: { id: "s1", totalSpend: 18_400_000, outstanding:  3_800_000, invoicesCount: 24, lastInvoice: d(0),  paymentTerms: 30, status: "balance", city: "Alger",      contact: "+213 23 45 67 89" },
+  s2: { id: "s2", totalSpend: 14_200_000, outstanding:          0, invoicesCount: 12, lastInvoice: d(2),  paymentTerms: 45, status: "ok",      city: "Skikda",     contact: "+213 38 22 11 04" },
+  s3: { id: "s3", totalSpend:  9_800_000, outstanding:  1_200_000, invoicesCount:  8, lastInvoice: d(8),  paymentTerms: 30, status: "balance", city: "Chlef",      contact: "+213 27 31 90 12" },
+  s4: { id: "s4", totalSpend:  6_400_000, outstanding:    420_000, invoicesCount: 14, lastInvoice: d(2),  paymentTerms: 15, status: "ok",      city: "Médéa",      contact: "+213 25 58 11 76" },
+  s5: { id: "s5", totalSpend:  4_900_000, outstanding:  2_180_000, invoicesCount:  9, lastInvoice: d(1),  paymentTerms: 30, status: "overdue", city: "Bouira",     contact: "+213 26 73 22 18" },
+  s6: { id: "s6", totalSpend:  3_640_000, outstanding:    280_000, invoicesCount: 11, lastInvoice: d(2),  paymentTerms: 15, status: "ok",      city: "Boumerdès",  contact: "+213 24 79 30 41" },
+  s7: { id: "s7", totalSpend: 12_800_000, outstanding:  4_600_000, invoicesCount:  6, lastInvoice: d(1),  paymentTerms: 60, status: "overdue", city: "Alger",      contact: "+213 23 91 02 14" },
+  s8: { id: "s8", totalSpend:    920_000, outstanding:          0, invoicesCount: 18, lastInvoice: d(7),  paymentTerms: 15, status: "ok",      city: "El Affroun", contact: "+213 25 38 47 22" },
+};
+
+/* ---------- Employee extended roster ---------- */
+
+export type EmployeeStatus = "active" | "leave" | "inactive";
+
+export interface EmployeeMeta {
+  id: string;
+  name: string;
+  role: string;
+  projectId: string;
+  hireDate: string;
+  phone: string;
+  status: EmployeeStatus;
+  baseSalary: number;
+  cashHeld: number;        // DA outstanding (cash holder)
+  daysWorkedMonth: number;
+}
+
+export const employeeRoster: EmployeeMeta[] = [
+  { id: "e1",  name: "Mohamed Benali",   role: "Chef de chantier",  projectId: "p1", hireDate: "2018-04-12", phone: "+213 661 22 14 09", status: "active", baseSalary: 95_000, cashHeld: 1_240_000, daysWorkedMonth: 26 },
+  { id: "e2",  name: "Karim Boudjedra",  role: "Caissier",          projectId: "p1", hireDate: "2020-09-03", phone: "+213 770 41 88 12", status: "active", baseSalary: 78_000, cashHeld: 4_820_000, daysWorkedMonth: 25 },
+  { id: "e3",  name: "Yacine Hamidi",    role: "Conducteur engin",  projectId: "p4", hireDate: "2019-01-22", phone: "+213 551 30 27 88", status: "active", baseSalary: 62_000, cashHeld:   680_000, daysWorkedMonth: 24 },
+  { id: "e4",  name: "Saïd Mansouri",    role: "Mécanicien",        projectId: "p2", hireDate: "2017-06-18", phone: "+213 550 12 73 41", status: "leave",  baseSalary: 70_000, cashHeld:         0, daysWorkedMonth: 18 },
+  { id: "e5",  name: "Rachid Khelifi",   role: "Topographe",        projectId: "p6", hireDate: "2021-03-08", phone: "+213 661 88 14 02", status: "active", baseSalary: 88_000, cashHeld:   320_000, daysWorkedMonth: 22 },
+  { id: "e6",  name: "Nadir Saadi",      role: "Magasinier",        projectId: "p5", hireDate: "2019-11-14", phone: "+213 770 22 91 30", status: "active", baseSalary: 58_000, cashHeld:   910_000, daysWorkedMonth: 26 },
+  { id: "e7",  name: "Hamid Belkacem",   role: "Conducteur engin",  projectId: "p3", hireDate: "2020-02-05", phone: "+213 555 41 02 18", status: "active", baseSalary: 74_000, cashHeld:         0, daysWorkedMonth: 23 },
+  { id: "e8",  name: "Tarek Zerouki",    role: "Maçon",             projectId: "p7", hireDate: "2022-05-19", phone: "+213 661 73 28 04", status: "active", baseSalary: 52_000, cashHeld:         0, daysWorkedMonth: 25 },
+  { id: "e9",  name: "Lounès Hadj",      role: "Manœuvre",          projectId: "p1", hireDate: "2023-01-11", phone: "+213 552 17 90 33", status: "active", baseSalary: 38_000, cashHeld:         0, daysWorkedMonth: 26 },
+  { id: "e10", name: "Brahim Khellaf",   role: "Chauffeur",         projectId: "p5", hireDate: "2018-08-30", phone: "+213 770 04 18 27", status: "active", baseSalary: 56_000, cashHeld:         0, daysWorkedMonth: 24 },
+  { id: "e11", name: "Omar Ferhat",      role: "Maçon",             projectId: "p3", hireDate: "2022-10-04", phone: "+213 661 28 90 14", status: "active", baseSalary: 50_000, cashHeld:         0, daysWorkedMonth: 26 },
+  { id: "e12", name: "Djamel Aliouane",  role: "Soudeur",           projectId: "p2", hireDate: "2019-07-22", phone: "+213 550 38 14 09", status: "active", baseSalary: 64_000, cashHeld:         0, daysWorkedMonth: 25 },
+  { id: "e13", name: "Mourad Belhadj",   role: "Manœuvre",          projectId: "p7", hireDate: "2023-06-01", phone: "+213 552 91 04 18", status: "active", baseSalary: 36_000, cashHeld:         0, daysWorkedMonth: 24 },
+  { id: "e14", name: "Slimane Cherif",   role: "Conducteur engin",  projectId: "p5", hireDate: "2020-04-18", phone: "+213 661 14 73 28", status: "inactive", baseSalary: 70_000, cashHeld:       0, daysWorkedMonth: 0  },
+];

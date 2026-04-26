@@ -424,5 +424,130 @@
     "absent": "Absent",
     "leave": "Leave",
     "rest": "Rest"
+  },
+  "machines_page": {
+    "title": "Machines & Vehicles",
+    "subtitle": "Fleet tracking — hours, fuel, repairs, utilization",
+    "kpi": {
+      "fleet": "Active fleet",
+      "fuel_cost": "Fuel cost (month)",
+      "repair_cost": "Repair cost (month)",
+      "utilization": "Avg utilization",
+      "downtime": "Under repair"
+    },
+    "filter": {
+      "all": "All",
+      "active": "Active",
+      "idle": "Idle",
+      "repair": "Repair"
+    },
+    "fuel_trend_title": "Fuel consumption — 30 days",
+    "fuel_trend_sub": "Liters / day — top machines",
+    "cost_rank_title": "Cost per machine — this month",
+    "cost_rank_sub": "Fuel + repairs (DA)",
+    "list_title": "Fleet — detail",
+    "kind": {
+      "truck": "Truck",
+      "excavator": "Excavator",
+      "loader": "Loader",
+      "roller": "Roller",
+      "grader": "Grader",
+      "paver": "Paver",
+      "pickup": "Pickup"
+    },
+    "status": {
+      "active": "Active",
+      "idle": "Idle",
+      "repair": "Repair"
+    },
+    "col": {
+      "machine": "Machine",
+      "kind": "Type",
+      "project": "Project",
+      "hours": "Hours",
+      "fuel_l": "Fuel (L)",
+      "fuel_cost": "Fuel cost",
+      "repair": "Repairs",
+      "utilization": "Utilization",
+      "status": "Status",
+      "last_service": "Last service"
+    }
+  },
+  "suppliers_page": {
+    "title": "Suppliers",
+    "subtitle": "Spend, balances and payment terms",
+    "kpi": {
+      "active": "Active suppliers",
+      "spend": "Spend (90d)",
+      "outstanding": "Total outstanding",
+      "overdue": "Overdue suppliers",
+      "avg_terms": "Avg terms (d)"
+    },
+    "filter": {
+      "all": "All",
+      "ok": "Up to date",
+      "balance": "Balance",
+      "overdue": "Overdue"
+    },
+    "top_title": "Top suppliers — 90d spend",
+    "top_sub": "Click to filter the list",
+    "category_title": "Category mix",
+    "category_sub": "Spend distribution",
+    "list_title": "Suppliers",
+    "status": {
+      "ok": "Up to date",
+      "balance": "Balance",
+      "overdue": "Overdue"
+    },
+    "col": {
+      "name": "Supplier",
+      "category": "Category",
+      "city": "City",
+      "spend": "Spend",
+      "outstanding": "Outstanding",
+      "invoices": "Invoices",
+      "last": "Last invoice",
+      "terms": "Terms",
+      "status": "Status",
+      "contact": "Contact"
+    }
+  },
+  "employees_page": {
+    "title": "Employees",
+    "subtitle": "Workforce, assignments and cash held",
+    "kpi": {
+      "headcount": "Total headcount",
+      "active": "Active",
+      "payroll": "Payroll (month)",
+      "cash": "Cash held",
+      "uncleared": "Open advances"
+    },
+    "filter": {
+      "all": "All",
+      "active": "Active",
+      "leave": "Leave",
+      "inactive": "Inactive"
+    },
+    "by_role_title": "Headcount by role",
+    "by_role_sub": "Workforce breakdown",
+    "by_project_title": "Headcount by project",
+    "by_project_sub": "Current assignments",
+    "list_title": "Roster",
+    "status": {
+      "active": "Active",
+      "leave": "Leave",
+      "inactive": "Inactive"
+    },
+    "col": {
+      "name": "Name",
+      "role": "Role",
+      "project": "Project",
+      "hire": "Hired",
+      "days": "Days worked",
+      "salary": "Base salary",
+      "cash": "Cash",
+      "phone": "Phone",
+      "status": "Status"
+    }
   }
 }
