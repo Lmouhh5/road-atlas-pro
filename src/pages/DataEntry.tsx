@@ -125,26 +125,26 @@ export default function DataEntry() {
 
             <TabsContent value="expense" className="mt-5">
               <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Field label={t("common2.date")}><Input type="date" defaultValue={todayIso} /></Field>
-                <Field label={t("common2.amount") + " (DA)"}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("common2.date")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("common2.amount") + " (DA)"}><Input name="amount" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
                 <Field label={t("common2.category")}>
-                  <PickList placeholder={t("data_entry.form.select_category")} options={expenseCategoryKeys.map((k) => ({ value: k, label: t(`categories.${k}`) }))} />
+                  <PickList name="category" placeholder={t("data_entry.form.select_category")} options={expenseCategoryKeys.map((k) => ({ value: k, label: t(`categories.${k}`) }))} />
                 </Field>
                 <Field label={t("common2.supplier")}>
-                  <PickList placeholder={t("data_entry.form.select_supplier")} options={suppliers.map((s) => ({ value: s.id, label: s.name }))} />
+                  <PickList name="supplier" placeholder={t("data_entry.form.select_supplier")} options={suppliers.map((s) => ({ value: s.id, label: s.name }))} />
                 </Field>
                 <Field label={t("common2.method")}>
-                  <PickList placeholder={t("data_entry.form.select_method")} options={[
+                  <PickList name="method" placeholder={t("data_entry.form.select_method")} options={[
                     { value: "cash", label: t("method.cash") },
                     { value: "bank", label: t("method.bank") },
                     { value: "credit", label: t("method.credit") },
                   ]} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -152,21 +152,21 @@ export default function DataEntry() {
 
             <TabsContent value="revenue" className="mt-5">
               <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Field label={t("common2.date")}><Input type="date" defaultValue={todayIso} /></Field>
-                <Field label={t("data_entry.form.invoice_number")}><Input placeholder="FA-2025-…" className="font-mono-num" /></Field>
-                <Field label={t("data_entry.form.client")}><Input placeholder="DTP / Wilaya / APC…" /></Field>
+                <Field label={t("common2.date")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("data_entry.form.invoice_number")}><Input name="invoice" placeholder="FA-2025-…" className="font-mono-num" /></Field>
+                <Field label={t("data_entry.form.client")}><Input name="client" placeholder="DTP / Wilaya / APC…" /></Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
-                <Field label={t("common2.amount") + " (DA)"}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("common2.amount") + " (DA)"}><Input name="amount" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("common2.method")}>
-                  <PickList placeholder={t("data_entry.form.select_method")} options={[
+                  <PickList name="method" placeholder={t("data_entry.form.select_method")} options={[
                     { value: "bank", label: t("method.bank") },
                     { value: "cash", label: t("method.cash") },
                   ]} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -180,16 +180,16 @@ export default function DataEntry() {
                     <DirectionTile dir="out" label={t("data_entry.form.out")} />
                   </div>
                 </Field>
-                <Field label={t("common2.date")}><Input type="date" defaultValue={todayIso} /></Field>
-                <Field label={t("common2.amount") + " (DA)"}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("common2.date")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("common2.amount") + " (DA)"}><Input name="amount" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("data_entry.form.holder")}>
-                  <PickList placeholder={t("data_entry.form.holder")} options={employees.map((e) => ({ value: e.id, label: `${e.name} — ${e.role}` }))} />
+                  <PickList name="holder" placeholder={t("data_entry.form.holder")} options={employees.map((e) => ({ value: e.id, label: `${e.name} — ${e.role}` }))} />
                 </Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -197,16 +197,16 @@ export default function DataEntry() {
 
             <TabsContent value="attendance" className="mt-5">
               <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Field label={t("data_entry.form.date_present")}><Input type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("data_entry.form.date_present")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
-                <Field label={t("data_entry.form.team_size")}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("data_entry.form.team_size")}><Input name="team" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("common2.manager")}>
-                  <PickList placeholder={t("common2.manager")} options={employees.map((e) => ({ value: e.id, label: e.name }))} />
+                  <PickList name="manager" placeholder={t("common2.manager")} options={employees.map((e) => ({ value: e.id, label: e.name }))} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -240,14 +240,18 @@ function Field({ label, children, className }: { label: string; children: React.
   );
 }
 
-function PickList({ options, placeholder }: { options: { value: string; label: string }[]; placeholder?: string }) {
+function PickList({ options, placeholder, name }: { options: { value: string; label: string }[]; placeholder?: string; name?: string }) {
+  const [val, setVal] = useState("");
   return (
-    <Select>
-      <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
-      <SelectContent>
-        {options.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-      </SelectContent>
-    </Select>
+    <>
+      <Select value={val} onValueChange={setVal}>
+        <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
+        <SelectContent>
+          {options.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+        </SelectContent>
+      </Select>
+      {name && <input type="hidden" name={name} value={val} />}
+    </>
   );
 }
 
