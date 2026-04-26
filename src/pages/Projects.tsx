@@ -229,9 +229,9 @@ function ProjectCard({ project: p }: { project: ProjectRow }) {
 
       <dl className="mt-3 grid grid-cols-2 gap-y-1.5 text-[11px]">
         <dt className="flex items-center gap-1 text-muted-foreground"><User   className="h-3 w-3" />{t("common2.manager")}</dt>
-        <dd className="text-end font-medium">{m.manager}</dd>
+        <dd className="text-end font-medium">{m?.manager ?? "—"}</dd>
         <dt className="flex items-center gap-1 text-muted-foreground"><MapPin className="h-3 w-3" />{t("common2.location")}</dt>
-        <dd className="text-end font-medium">{m.location}</dd>
+        <dd className="text-end font-medium">{m?.location ?? "—"}</dd>
       </dl>
 
       <div className="mt-3">
