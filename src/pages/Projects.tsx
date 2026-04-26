@@ -8,7 +8,8 @@ import { Briefcase, Wallet, Coins, Percent, LayoutGrid, List, MapPin, User } fro
 import { PageHeader, StatusBadge } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { Button } from "@/components/ui/button";
-import { projects, projectMeta, projectSpendTrend, type ProjectStatus } from "@/data/mock";
+import { projectMeta, projectSpendTrend, type ProjectStatus } from "@/data/mock";
+import { useProjects } from "@/hooks/queries/useProjects";
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -28,17 +29,20 @@ export default function Projects() {
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">("all");
   const [view, setView] = useState<"grid" | "table">("grid");
 
+  const { data: projects = [] } = useProjects();
+
   const filtered = useMemo(
     () => (statusFilter === "all" ? projects : projects.filter((p) => p.status === statusFilter)),
-    [statusFilter],
+    [statusFilter, projects],
   );
 
   const kpi = useMemo(() => {
+    if (projects.length === 0) return { count: 0, totalBudget: 0, totalSpent: 0, avgMargin: 0 };
     const totalBudget = projects.reduce((s, p) => s + p.budget, 0);
     const totalSpent  = projects.reduce((s, p) => s + p.spent, 0);
     const avgMargin = projects.reduce((s, p) => s + p.margin, 0) / projects.length;
     return { count: projects.length, totalBudget, totalSpent, avgMargin };
-  }, []);
+  }, [projects]);
 
   const consumptionData = filtered.map((p) => ({
     name: p.code, full: p.name,
