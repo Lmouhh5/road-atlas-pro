@@ -12,10 +12,9 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  attendanceHeatmap, todayAttendance, projects,
-  type AttendanceStatus,
-} from "@/data/mock";
+import { type AttendanceStatus, type AttendanceCell } from "@/data/mock";
+import { useTodayAttendance, useAttendanceHeatmap } from "@/hooks/queries/useAttendance";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -36,16 +35,15 @@ const STATUS_TONE: Record<AttendanceStatus, string> = {
 };
 
 /** Group heatmap into 12 columns (weeks) of 7 rows (days), aligned so latest day is bottom-right. */
-function buildHeatGrid(cells: typeof attendanceHeatmap) {
-  // cells are oldest-first. Pad start so first cell aligns to its weekday.
+function buildHeatGrid(cells: AttendanceCell[]) {
+  if (cells.length === 0) return [];
   const first = new Date(cells[0].date + "T00:00:00");
-  const firstDow = first.getDay(); // 0=Sun .. 6=Sat
-  const padded: (typeof cells[number] | null)[] = [];
+  const firstDow = first.getDay();
+  const padded: (AttendanceCell | null)[] = [];
   for (let i = 0; i < firstDow; i++) padded.push(null);
   cells.forEach((c) => padded.push(c));
-  // Round up to multiple of 7
   while (padded.length % 7 !== 0) padded.push(null);
-  const weeks: ((typeof cells[number]) | null)[][] = [];
+  const weeks: (AttendanceCell | null)[][] = [];
   for (let i = 0; i < padded.length; i += 7) {
     weeks.push(padded.slice(i, i + 7));
   }
@@ -73,6 +71,9 @@ const HEAT_LEVELS = [
 
 export default function Attendance() {
   const { t } = useTranslation();
+  const { data: todayAttendance = [] } = useTodayAttendance();
+  const { data: attendanceHeatmap = [] } = useAttendanceHeatmap();
+  const { data: projects = [] } = useProjectsList();
   const [q, setQ] = useState("");
   const [status, setStatus] = useState<AttendanceStatus | "all">("all");
   const [project, setProject] = useState<string>("all");
@@ -87,7 +88,7 @@ export default function Attendance() {
         if (q && !`${r.name} ${r.role}`.toLowerCase().includes(q.toLowerCase())) return false;
         return true;
       }),
-    [status, project, q],
+    [status, project, q, todayAttendance, projects],
   );
 
   const kpi = useMemo(() => {
@@ -97,7 +98,7 @@ export default function Attendance() {
     const total = present + absent + leave;
     const rate = total > 0 ? (present / total) * 100 : 0;
     return { present, absent, leave, rate };
-  }, []);
+  }, [todayAttendance]);
 
   const trend = useMemo(
     () =>
@@ -107,13 +108,13 @@ export default function Attendance() {
         absent: c.absent,
         leave: c.leave,
       })),
-    [],
+    [attendanceHeatmap],
   );
 
-  const grid = useMemo(() => buildHeatGrid(attendanceHeatmap), []);
+  const grid = useMemo(() => buildHeatGrid(attendanceHeatmap), [attendanceHeatmap]);
   const maxPresent = useMemo(
     () => Math.max(1, ...attendanceHeatmap.map((c) => c.present)),
-    [],
+    [attendanceHeatmap],
   );
 
   const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];

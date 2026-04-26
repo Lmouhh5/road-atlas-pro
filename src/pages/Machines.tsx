@@ -7,7 +7,9 @@ import {
 import { Truck, Fuel, Wrench, Activity, AlertOctagon } from "lucide-react";
 import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
-import { machines, fuelTrend, projects, type MachineStatus } from "@/data/mock";
+import { fuelTrend, type MachineStatus } from "@/data/mock";
+import { useMachines } from "@/hooks/queries/useMachines";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -30,21 +32,23 @@ const FUEL_LINES = [
 
 export default function Machines() {
   const { t } = useTranslation();
+  const { data: machines = [] } = useMachines();
+  const { data: projects = [] } = useProjectsList();
   const [statusFilter, setStatusFilter] = useState<MachineStatus | "all">("all");
 
   const filtered = useMemo(
     () => (statusFilter === "all" ? machines : machines.filter((m) => m.status === statusFilter)),
-    [statusFilter],
+    [statusFilter, machines],
   );
 
   const kpi = useMemo(() => {
     const fleet       = machines.filter((m) => m.status !== "inactive" as never).length;
     const fuelCost    = machines.reduce((s, m) => s + m.fuelCostMonth, 0);
     const repairCost  = machines.reduce((s, m) => s + m.repairCostMonth, 0);
-    const utilization = machines.reduce((s, m) => s + m.utilization, 0) / machines.length;
+    const utilization = machines.length ? machines.reduce((s, m) => s + m.utilization, 0) / machines.length : 0;
     const downtime    = machines.filter((m) => m.status === "repair").length;
     return { fleet, fuelCost, repairCost, utilization, downtime };
-  }, []);
+  }, [machines]);
 
   const costData = useMemo(
     () =>

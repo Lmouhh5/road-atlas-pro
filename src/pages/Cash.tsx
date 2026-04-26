@@ -11,7 +11,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { Section } from "@/components/Section";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cashHolders, cashMovements, cashDailyBalance, type CashHolder } from "@/data/mock";
+import { cashDailyBalance, type CashHolder } from "@/data/mock";
+import { useCashHolders, useCashMovements } from "@/hooks/queries/useCash";
 import { formatDA, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,8 @@ function daysSince(iso: string) {
 
 export default function Cash() {
   const { t } = useTranslation();
+  const { data: cashHolders = [] } = useCashHolders();
+  const { data: cashMovements = [] } = useCashMovements();
   const [q, setQ] = useState("");
 
   const totals = useMemo(() => {
@@ -38,7 +41,7 @@ export default function Cash() {
     const cash = lastDay.cash * 1_000_000;
     const advances = cashHolders.reduce((s, h) => s + h.balance, 0);
     return { bank, cash, advances, holders: cashHolders.length };
-  }, []);
+  }, [cashHolders]);
 
   const composition = useMemo(
     () => [
@@ -56,7 +59,7 @@ export default function Cash() {
       const holder = cashHolders.find((h) => h.id === m.holderId)?.name ?? "";
       return `${m.reason} ${holder} ${m.reference ?? ""}`.toLowerCase().includes(ql);
     });
-  }, [q]);
+  }, [q, cashMovements, cashHolders]);
 
   return (
     <div className="space-y-5">

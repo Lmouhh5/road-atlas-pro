@@ -13,10 +13,9 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  monthlyCashflow, expenseDistribution, projects, expenseCategoryKeys,
-  type ExpenseCategory,
-} from "@/data/mock";
+import { expenseCategoryKeys, type ExpenseCategory } from "@/data/mock";
+import { useProjectFinancialSummary } from "@/hooks/queries/useProjectFinancialSummary";
+import { useMonthlyCashflow, useExpenseDistribution } from "@/hooks/queries/useDerived";
 import { formatDA, formatPct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +41,9 @@ const CAT_COLORS: Record<ExpenseCategory, string> = {
 export default function Reports() {
   const { t } = useTranslation();
   const [period, setPeriod] = useState<"6m" | "12m" | "ytd">("6m");
+  const monthlyCashflow = useMonthlyCashflow();
+  const expenseDistribution = useExpenseDistribution();
+  const { data: projects = [] } = useProjectFinancialSummary();
 
   const totals = useMemo(() => {
     const revenue  = monthlyCashflow.reduce((s, m) => s + m.revenue, 0);
@@ -49,7 +51,7 @@ export default function Reports() {
     const net = revenue - expenses;
     const margin = revenue > 0 ? (net / revenue) * 100 : 0;
     return { revenue, expenses, net, margin };
-  }, []);
+  }, [monthlyCashflow]);
 
   const marginSeries = useMemo(
     () =>
@@ -57,7 +59,7 @@ export default function Reports() {
         month: m.month,
         margin: m.revenue > 0 ? +((m.profit / m.revenue) * 100).toFixed(1) : 0,
       })),
-    [],
+    [monthlyCashflow],
   );
 
   const expenseSplit = useMemo(
@@ -68,17 +70,17 @@ export default function Reports() {
         value: s.value,
         color: CAT_COLORS[s.key as ExpenseCategory] ?? "hsl(var(--muted-foreground))",
       })),
-    [t],
+    [t, expenseDistribution],
   );
 
   const projectPerf = useMemo(
     () =>
       projects.map((p) => ({
         code: p.code,
-        consumed: +((p.spent / p.budget) * 100).toFixed(1),
+        consumed: p.budget > 0 ? +((p.spent / p.budget) * 100).toFixed(1) : 0,
         margin: p.margin,
       })),
-    [],
+    [projects],
   );
 
   return (

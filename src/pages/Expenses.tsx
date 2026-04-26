@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  expenses, projects, suppliers, expenseCategoryKeys,
-  type ExpenseCategory, type PaymentMethod, type ProofStatus,
-} from "@/data/mock";
+import { expenseCategoryKeys, type ExpenseCategory, type PaymentMethod, type ProofStatus } from "@/data/mock";
+import { useExpenses } from "@/hooks/queries/useExpenses";
+import { useSuppliers } from "@/hooks/queries/useSuppliers";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +42,9 @@ const CAT_COLORS: Record<ExpenseCategory, string> = {
 
 export default function Expenses() {
   const { t } = useTranslation();
+  const { data: expenses = [] } = useExpenses();
+  const { data: suppliers = [] } = useSuppliers();
+  const { data: projects = [] } = useProjectsList();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ExpenseCategory | "all">("all");
   const [method, setMethod] = useState<PaymentMethod | "all">("all");

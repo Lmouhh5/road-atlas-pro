@@ -15,9 +15,14 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import {
-  projects, suppliers, employees, expenseCategoryKeys, recentActivity,
-} from "@/data/mock";
+import { expenseCategoryKeys, recentActivity } from "@/data/mock";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
+import { useSuppliers } from "@/hooks/queries/useSuppliers";
+import { useEmployees } from "@/hooks/queries/useEmployees";
+import { useInsertExpense } from "@/hooks/queries/useExpenses";
+import { useInsertInvoice } from "@/hooks/queries/useInvoices";
+import { useInsertCashIssue } from "@/hooks/queries/useCash";
+import { useInsertAttendance } from "@/hooks/queries/useAttendance";
 import { formatDA, formatRelativeDays } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -27,10 +32,60 @@ export default function DataEntry() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const [tab, setTab] = useState("expense");
+  const { data: projects = [] } = useProjectsList();
+  const { data: suppliers = [] } = useSuppliers();
+  const { data: employees = [] } = useEmployees();
+  const insertExpense = useInsertExpense();
+  const insertInvoice = useInsertInvoice();
+  const insertCash = useInsertCashIssue();
+  const insertAttendance = useInsertAttendance();
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: t("data_entry.form.saved"), description: t(`data_entry.tabs.${tab}`) });
+    const form = e.currentTarget as HTMLFormElement;
+    const fd = new FormData(form);
+    const get = (k: string) => (fd.get(k) as string) || "";
+    const num = (k: string) => Number(fd.get(k) || 0);
+    try {
+      if (tab === "expense") {
+        await insertExpense.mutateAsync({
+          expense_date: get("date") || new Date().toISOString().slice(0, 10),
+          amount: num("amount"),
+          project_id: get("project") || null,
+          category: get("category") || null,
+          supplier_id: get("supplier") || null,
+          method: get("method") || null,
+          description: get("description") || null,
+        });
+      } else if (tab === "revenue") {
+        await insertInvoice.mutateAsync({
+          client: get("client") || "—",
+          amount: num("amount"),
+          invoice_number: get("invoice") || undefined,
+          issued_date: get("date") || undefined,
+          project_id: get("project") || null,
+        });
+      } else if (tab === "cash") {
+        await insertCash.mutateAsync({
+          issue_date: get("date") || undefined,
+          amount: num("amount"),
+          holder_id: get("holder") || null,
+          note: get("description") || undefined,
+        });
+      } else if (tab === "attendance") {
+        await insertAttendance.mutateAsync({
+          attendance_date: get("date") || undefined,
+          project_id: get("project") || null,
+          employee_id: get("manager") || null,
+          hours: num("team") || 0,
+          note: get("description") || undefined,
+        });
+      }
+      toast({ title: t("data_entry.form.saved"), description: t(`data_entry.tabs.${tab}`) });
+      form.reset();
+    } catch (err) {
+      toast({ title: "Error", description: (err as Error).message, variant: "destructive" });
+    }
   };
 
   const todaySummary = useMemo(() => {
@@ -70,26 +125,26 @@ export default function DataEntry() {
 
             <TabsContent value="expense" className="mt-5">
               <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Field label={t("common2.date")}><Input type="date" defaultValue={todayIso} /></Field>
-                <Field label={t("common2.amount") + " (DA)"}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("common2.date")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("common2.amount") + " (DA)"}><Input name="amount" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
                 <Field label={t("common2.category")}>
-                  <PickList placeholder={t("data_entry.form.select_category")} options={expenseCategoryKeys.map((k) => ({ value: k, label: t(`categories.${k}`) }))} />
+                  <PickList name="category" placeholder={t("data_entry.form.select_category")} options={expenseCategoryKeys.map((k) => ({ value: k, label: t(`categories.${k}`) }))} />
                 </Field>
                 <Field label={t("common2.supplier")}>
-                  <PickList placeholder={t("data_entry.form.select_supplier")} options={suppliers.map((s) => ({ value: s.id, label: s.name }))} />
+                  <PickList name="supplier" placeholder={t("data_entry.form.select_supplier")} options={suppliers.map((s) => ({ value: s.id, label: s.name }))} />
                 </Field>
                 <Field label={t("common2.method")}>
-                  <PickList placeholder={t("data_entry.form.select_method")} options={[
+                  <PickList name="method" placeholder={t("data_entry.form.select_method")} options={[
                     { value: "cash", label: t("method.cash") },
                     { value: "bank", label: t("method.bank") },
                     { value: "credit", label: t("method.credit") },
                   ]} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -97,21 +152,21 @@ export default function DataEntry() {
 
             <TabsContent value="revenue" className="mt-5">
               <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Field label={t("common2.date")}><Input type="date" defaultValue={todayIso} /></Field>
-                <Field label={t("data_entry.form.invoice_number")}><Input placeholder="FA-2025-…" className="font-mono-num" /></Field>
-                <Field label={t("data_entry.form.client")}><Input placeholder="DTP / Wilaya / APC…" /></Field>
+                <Field label={t("common2.date")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("data_entry.form.invoice_number")}><Input name="invoice" placeholder="FA-2025-…" className="font-mono-num" /></Field>
+                <Field label={t("data_entry.form.client")}><Input name="client" placeholder="DTP / Wilaya / APC…" /></Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
-                <Field label={t("common2.amount") + " (DA)"}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("common2.amount") + " (DA)"}><Input name="amount" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("common2.method")}>
-                  <PickList placeholder={t("data_entry.form.select_method")} options={[
+                  <PickList name="method" placeholder={t("data_entry.form.select_method")} options={[
                     { value: "bank", label: t("method.bank") },
                     { value: "cash", label: t("method.cash") },
                   ]} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -125,16 +180,16 @@ export default function DataEntry() {
                     <DirectionTile dir="out" label={t("data_entry.form.out")} />
                   </div>
                 </Field>
-                <Field label={t("common2.date")}><Input type="date" defaultValue={todayIso} /></Field>
-                <Field label={t("common2.amount") + " (DA)"}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("common2.date")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("common2.amount") + " (DA)"}><Input name="amount" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("data_entry.form.holder")}>
-                  <PickList placeholder={t("data_entry.form.holder")} options={employees.map((e) => ({ value: e.id, label: `${e.name} — ${e.role}` }))} />
+                  <PickList name="holder" placeholder={t("data_entry.form.holder")} options={employees.map((e) => ({ value: e.id, label: `${e.name} — ${e.role}` }))} />
                 </Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -142,16 +197,16 @@ export default function DataEntry() {
 
             <TabsContent value="attendance" className="mt-5">
               <form onSubmit={onSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Field label={t("data_entry.form.date_present")}><Input type="date" defaultValue={todayIso} /></Field>
+                <Field label={t("data_entry.form.date_present")}><Input name="date" type="date" defaultValue={todayIso} /></Field>
                 <Field label={t("common2.project")}>
-                  <PickList placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
+                  <PickList name="project" placeholder={t("data_entry.form.select_project")} options={projects.map((p) => ({ value: p.id, label: `${p.code} — ${p.name}` }))} />
                 </Field>
-                <Field label={t("data_entry.form.team_size")}><Input type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
+                <Field label={t("data_entry.form.team_size")}><Input name="team" type="number" inputMode="numeric" placeholder="0" className="font-mono-num" /></Field>
                 <Field label={t("common2.manager")}>
-                  <PickList placeholder={t("common2.manager")} options={employees.map((e) => ({ value: e.id, label: e.name }))} />
+                  <PickList name="manager" placeholder={t("common2.manager")} options={employees.map((e) => ({ value: e.id, label: e.name }))} />
                 </Field>
                 <Field label={t("common2.description")} className="md:col-span-2">
-                  <Textarea placeholder={t("data_entry.form.description_ph")} rows={2} />
+                  <Textarea name="description" placeholder={t("data_entry.form.description_ph")} rows={2} />
                 </Field>
                 <SubmitRow t={t} />
               </form>
@@ -185,14 +240,18 @@ function Field({ label, children, className }: { label: string; children: React.
   );
 }
 
-function PickList({ options, placeholder }: { options: { value: string; label: string }[]; placeholder?: string }) {
+function PickList({ options, placeholder, name }: { options: { value: string; label: string }[]; placeholder?: string; name?: string }) {
+  const [val, setVal] = useState("");
   return (
-    <Select>
-      <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
-      <SelectContent>
-        {options.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
-      </SelectContent>
-    </Select>
+    <>
+      <Select value={val} onValueChange={setVal}>
+        <SelectTrigger><SelectValue placeholder={placeholder} /></SelectTrigger>
+        <SelectContent>
+          {options.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+        </SelectContent>
+      </Select>
+      {name && <input type="hidden" name={name} value={val} />}
+    </>
   );
 }
 

@@ -14,10 +14,9 @@ import { Button } from "@/components/ui/button";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  alerts, alertTrend, leakByCategory, projects,
-  type AlertSeverity, type AlertKind,
-} from "@/data/mock";
+import { alertTrend, leakByCategory, type AlertSeverity, type AlertKind } from "@/data/mock";
+import { useAlerts } from "@/hooks/queries/useAlerts";
+import { useProjectsList } from "@/hooks/queries/useProjectsList";
 import { formatDA, formatRelativeDays } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -56,6 +55,8 @@ const KIND_ICON: Record<AlertKind, React.ReactNode> = {
 
 export default function Alerts() {
   const { t } = useTranslation();
+  const { data: alerts = [] } = useAlerts();
+  const { data: projects = [] } = useProjectsList();
   const [sev, setSev] = useState<AlertSeverity | "all">("all");
   const [kind, setKind] = useState<AlertKind | "all">("all");
 
@@ -68,16 +69,16 @@ export default function Alerts() {
         if (kind !== "all" && a.kind !== kind) return false;
         return true;
       }),
-    [sev, kind],
+    [sev, kind, alerts],
   );
 
   const kpi = useMemo(() => {
     const open = alerts.filter((a) => a.status === "open").length;
     const critical = alerts.filter((a) => a.severity === "critical" && a.status !== "resolved").length;
     const leakage = leakByCategory.reduce((s, l) => s + l.value, 0);
-    const resolved = 14; // synthesized
+    const resolved = alerts.filter((a) => a.status === "resolved").length;
     return { open, critical, leakage, resolved };
-  }, []);
+  }, [alerts]);
 
   const leakChart = useMemo(
     () =>

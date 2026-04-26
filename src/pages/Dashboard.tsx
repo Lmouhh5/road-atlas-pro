@@ -9,10 +9,9 @@ import {
 } from "lucide-react";
 import { KpiCard } from "@/components/kpi/KpiCard";
 import { Section } from "@/components/Section";
-import {
-  kpis, sparks, monthlyCashflow, expenseDistribution, alertSummary,
-} from "@/data/mock";
+import { kpis, sparks, alertSummary } from "@/data/mock";
 import { useProjectFinancialSummary } from "@/hooks/queries/useProjectFinancialSummary";
+import { useMonthlyCashflow, useExpenseDistribution } from "@/hooks/queries/useDerived";
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -38,6 +37,8 @@ const tooltipStyle = {
 export default function Dashboard() {
   const { t } = useTranslation();
   const { data: projects = [] } = useProjectFinancialSummary();
+  const monthlyCashflow = useMonthlyCashflow();
+  const expenseDistribution = useExpenseDistribution();
 
   return (
     <div className="space-y-5">
