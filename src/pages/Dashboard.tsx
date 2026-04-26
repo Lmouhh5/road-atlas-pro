@@ -10,8 +10,9 @@ import {
 import { KpiCard } from "@/components/kpi/KpiCard";
 import { Section } from "@/components/Section";
 import {
-  kpis, sparks, monthlyCashflow, expenseDistribution, projects, alertSummary,
+  kpis, sparks, monthlyCashflow, expenseDistribution, alertSummary,
 } from "@/data/mock";
+import { useProjectFinancialSummary } from "@/hooks/queries/useProjectFinancialSummary";
 import { formatDA } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,7 @@ const tooltipStyle = {
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const { data: projects = [] } = useProjectFinancialSummary();
 
   return (
     <div className="space-y-5">
