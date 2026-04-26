@@ -42,6 +42,9 @@ const CAT_COLORS: Record<ExpenseCategory, string> = {
 
 export default function Expenses() {
   const { t } = useTranslation();
+  const { data: expenses = [] } = useExpenses();
+  const { data: suppliers = [] } = useSuppliers();
+  const { data: projects = [] } = useProjectsList();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ExpenseCategory | "all">("all");
   const [method, setMethod] = useState<PaymentMethod | "all">("all");
