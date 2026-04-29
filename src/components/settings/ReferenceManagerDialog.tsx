@@ -15,10 +15,15 @@ import { useEmployees, useInsertEmployee } from "@/hooks/queries/useEmployees";
 import { useMachines, useInsertMachine } from "@/hooks/queries/useMachines";
 import { useSuppliers, useInsertSupplier } from "@/hooks/queries/useSuppliers";
 import { useCashHolders, useInsertCashHolder } from "@/hooks/queries/useCash";
+import {
+  useExpenseCategories, useInsertExpenseCategory,
+  useSubCostCenters, useInsertSubCostCenter,
+} from "@/hooks/queries/useTaxonomies";
 import { useUpdateRef, useDeleteRef } from "@/hooks/queries/useRefMutations";
 
 export type RefEntityKind =
-  | "projects" | "employees" | "machines" | "suppliers" | "cash_holders";
+  | "projects" | "employees" | "machines" | "suppliers" | "cash_holders"
+  | "categories" | "subcost";
 
 interface FieldDef {
   name: string;
@@ -30,7 +35,7 @@ interface FieldDef {
 }
 
 interface EntityConfig {
-  table: "projects" | "employees" | "assets" | "suppliers" | "cash_holders";
+  table: "projects" | "employees" | "assets" | "suppliers" | "cash_holders" | "expense_categories" | "sub_cost_centers";
   title: string;
   fields: FieldDef[];
 }
@@ -83,6 +88,24 @@ const CONFIG: Record<RefEntityKind, EntityConfig> = {
       { name: "balance", label: "Solde (DA)", type: "number", showInTable: true },
     ],
   },
+  categories: {
+    table: "expense_categories",
+    title: "Catégories de dépenses",
+    fields: [
+      { name: "code", label: "Code", required: true, placeholder: "fuel", showInTable: true },
+      { name: "name", label: "Nom", required: true, showInTable: true },
+      { name: "sort_order", label: "Ordre", type: "number", showInTable: true },
+    ],
+  },
+  subcost: {
+    table: "sub_cost_centers",
+    title: "Sous-centres de coût",
+    fields: [
+      { name: "code", label: "Code", required: true, placeholder: "EARTH", showInTable: true },
+      { name: "name", label: "Nom", required: true, showInTable: true },
+      { name: "sort_order", label: "Ordre", type: "number", showInTable: true },
+    ],
+  },
 };
 
 function useListFor(kind: RefEntityKind) {
@@ -91,6 +114,8 @@ function useListFor(kind: RefEntityKind) {
   const m = useMachines();
   const s = useSuppliers();
   const c = useCashHolders();
+  const cat = useExpenseCategories();
+  const scc = useSubCostCenters();
   switch (kind) {
     case "projects":
       return { isLoading: p.isLoading, rows: (p.data ?? []).map((r) => ({ id: r.id, code: r.code, name: r.name, budget: "" })) };
@@ -102,6 +127,10 @@ function useListFor(kind: RefEntityKind) {
       return { isLoading: s.isLoading, rows: (s.data ?? []).map((r) => ({ id: r.id, name: r.name, category: r.category, contact: r.contact, phone: r.phone })) };
     case "cash_holders":
       return { isLoading: c.isLoading, rows: (c.data ?? []).map((r) => ({ id: r.id, name: r.name, role: r.role, balance: r.balance })) };
+    case "categories":
+      return { isLoading: cat.isLoading, rows: (cat.data ?? []).map((r) => ({ id: r.id, code: r.code, name: r.name, sort_order: r.sort_order })) };
+    case "subcost":
+      return { isLoading: scc.isLoading, rows: (scc.data ?? []).map((r) => ({ id: r.id, code: r.code, name: r.name, sort_order: r.sort_order })) };
   }
 }
 
@@ -111,12 +140,16 @@ function useInsertFor(kind: RefEntityKind) {
   const m = useInsertMachine();
   const s = useInsertSupplier();
   const c = useInsertCashHolder();
+  const cat = useInsertExpenseCategory();
+  const scc = useInsertSubCostCenter();
   switch (kind) {
     case "projects": return p;
     case "employees": return e;
     case "machines": return m;
     case "suppliers": return s;
     case "cash_holders": return c;
+    case "categories": return cat;
+    case "subcost": return scc;
   }
 }
 
