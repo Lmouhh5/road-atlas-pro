@@ -21,6 +21,7 @@ import {
   projects, employees, suppliers, machines, cashHolders, expenseCategoryKeys,
 } from "@/data/mock";
 import { cn } from "@/lib/utils";
+import { ReferenceEntityDialog } from "@/components/settings/ReferenceEntityDialog";
 
 type TabKey = "reference" | "thresholds" | "display" | "data";
 
@@ -72,23 +73,22 @@ function ReferenceTab() {
   const { t } = useTranslation();
   const items = useMemo(
     () => [
-      { key: "projects",     icon: Briefcase, count: projects.length },
-      { key: "subcost",      icon: Layers,    count: projects.length * 9 },
-      { key: "categories",   icon: Tags,      count: expenseCategoryKeys.length },
-      { key: "employees",    icon: Users,     count: employees.length },
-      { key: "machines",     icon: Truck,     count: machines.length },
-      { key: "suppliers",    icon: Building2, count: suppliers.length },
-      { key: "cash_holders", icon: Wallet,    count: cashHolders.length },
-    ] as const,
+      { key: "projects",     icon: Briefcase, count: projects.length,             entity: "projects" as const },
+      { key: "subcost",      icon: Layers,    count: projects.length * 9,         entity: null },
+      { key: "categories",   icon: Tags,      count: expenseCategoryKeys.length,  entity: null },
+      { key: "employees",    icon: Users,     count: employees.length,            entity: "employees" as const },
+      { key: "machines",     icon: Truck,     count: machines.length,             entity: "machines" as const },
+      { key: "suppliers",    icon: Building2, count: suppliers.length,            entity: "suppliers" as const },
+      { key: "cash_holders", icon: Wallet,    count: cashHolders.length,          entity: "cash_holders" as const },
+    ],
     [],
   );
 
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-      {items.map(({ key, icon: Icon, count }) => (
-        <button
+      {items.map(({ key, icon: Icon, count, entity }) => (
+        <div
           key={key}
-          onClick={() => toast.info(t("page.coming_soon"))}
           className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 text-start shadow-elev-sm transition hover:border-primary/40 hover:shadow-elev-md"
         >
           <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
@@ -102,9 +102,19 @@ function ReferenceTab() {
             <span className="rounded-md bg-muted px-2 py-0.5 font-mono-num font-semibold">
               {count} {t("settings_page.ref.items")}
             </span>
-            <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground rtl:rotate-180 rtl:group-hover:-translate-x-0.5" />
+            {entity ? (
+              <ReferenceEntityDialog kind={entity} />
+            ) : (
+              <button
+                onClick={() => toast.info(t("page.coming_soon"))}
+                className="rounded-md p-1 text-muted-foreground transition hover:text-foreground"
+                aria-label="open"
+              >
+                <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+              </button>
+            )}
           </span>
-        </button>
+        </div>
       ))}
     </div>
   );
