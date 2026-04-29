@@ -71,13 +71,13 @@ export default function Settings() {
 
 function ReferenceTab() {
   const { t } = useTranslation();
-  const [openKind, setOpenKind] = useState<null | "projects" | "employees" | "machines" | "suppliers" | "cash_holders">(null);
+  const [openKind, setOpenKind] = useState<null | "projects" | "employees" | "machines" | "suppliers" | "cash_holders" | "categories" | "subcost">(null);
 
   const items = useMemo(
     () => [
       { key: "projects",     icon: Briefcase, count: projects.length,             entity: "projects" as const },
-      { key: "subcost",      icon: Layers,    count: projects.length * 9,         entity: null },
-      { key: "categories",   icon: Tags,      count: expenseCategoryKeys.length,  entity: null },
+      { key: "subcost",      icon: Layers,    count: projects.length * 9,         entity: "subcost" as const },
+      { key: "categories",   icon: Tags,      count: expenseCategoryKeys.length,  entity: "categories" as const },
       { key: "employees",    icon: Users,     count: employees.length,            entity: "employees" as const },
       { key: "machines",     icon: Truck,     count: machines.length,             entity: "machines" as const },
       { key: "suppliers",    icon: Building2, count: suppliers.length,            entity: "suppliers" as const },
