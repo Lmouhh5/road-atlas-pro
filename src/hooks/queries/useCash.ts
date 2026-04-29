@@ -49,6 +49,18 @@ export function useCashMovements() {
   });
 }
 
+export function useInsertCashHolder() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { name: string; role?: string; balance?: number }) => {
+      const { data, error } = await supabase.from("cash_holders").insert(input).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["cash_holders"] }),
+  });
+}
+
 export function useInsertCashIssue() {
   const qc = useQueryClient();
   return useMutation({
