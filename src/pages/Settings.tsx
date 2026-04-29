@@ -21,7 +21,7 @@ import {
   projects, employees, suppliers, machines, cashHolders, expenseCategoryKeys,
 } from "@/data/mock";
 import { cn } from "@/lib/utils";
-import { ReferenceEntityDialog } from "@/components/settings/ReferenceEntityDialog";
+import { ReferenceManagerDialog } from "@/components/settings/ReferenceManagerDialog";
 
 type TabKey = "reference" | "thresholds" | "display" | "data";
 
@@ -71,6 +71,8 @@ export default function Settings() {
 
 function ReferenceTab() {
   const { t } = useTranslation();
+  const [openKind, setOpenKind] = useState<null | "projects" | "employees" | "machines" | "suppliers" | "cash_holders">(null);
+
   const items = useMemo(
     () => [
       { key: "projects",     icon: Briefcase, count: projects.length,             entity: "projects" as const },
@@ -85,38 +87,38 @@ function ReferenceTab() {
   );
 
   return (
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-      {items.map(({ key, icon: Icon, count, entity }) => (
-        <div
-          key={key}
-          className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 text-start shadow-elev-sm transition hover:border-primary/40 hover:shadow-elev-md"
-        >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
-            <Icon className="h-4 w-4" />
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-semibold">{t(`settings_page.ref.${key}`)}</span>
-            <span className="mt-0.5 block truncate text-xs text-muted-foreground">{t("settings_page.ref.hint")}</span>
-          </span>
-          <span className="flex shrink-0 items-center gap-2 text-xs">
-            <span className="rounded-md bg-muted px-2 py-0.5 font-mono-num font-semibold">
-              {count} {t("settings_page.ref.items")}
+    <>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+        {items.map(({ key, icon: Icon, count, entity }) => (
+          <button
+            key={key}
+            onClick={() => entity ? setOpenKind(entity) : toast.info(t("page.coming_soon"))}
+            className="group flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-start shadow-elev-sm transition hover:border-primary/40 hover:shadow-elev-md"
+          >
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
+              <Icon className="h-4 w-4" />
             </span>
-            {entity ? (
-              <ReferenceEntityDialog kind={entity} />
-            ) : (
-              <button
-                onClick={() => toast.info(t("page.coming_soon"))}
-                className="rounded-md p-1 text-muted-foreground transition hover:text-foreground"
-                aria-label="open"
-              >
-                <ChevronRight className="h-4 w-4 rtl:rotate-180" />
-              </button>
-            )}
-          </span>
-        </div>
-      ))}
-    </div>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold">{t(`settings_page.ref.${key}`)}</span>
+              <span className="mt-0.5 block truncate text-xs text-muted-foreground">{t("settings_page.ref.hint")}</span>
+            </span>
+            <span className="flex shrink-0 items-center gap-2 text-xs">
+              <span className="rounded-md bg-muted px-2 py-0.5 font-mono-num font-semibold">
+                {count} {t("settings_page.ref.items")}
+              </span>
+              <ChevronRight className="h-4 w-4 text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground rtl:rotate-180" />
+            </span>
+          </button>
+        ))}
+      </div>
+      {openKind && (
+        <ReferenceManagerDialog
+          kind={openKind}
+          open={!!openKind}
+          onOpenChange={(o) => !o && setOpenKind(null)}
+        />
+      )}
+    </>
   );
 }
 
