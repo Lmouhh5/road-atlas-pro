@@ -15,7 +15,7 @@ export function useUpdateRef(table: RefTable) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, values }: { id: string; values: Record<string, unknown> }) => {
-      const { data, error } = await supabase.from(table).update(values).eq("id", id).select().single();
+      const { data, error } = await (supabase.from(table) as any).update(values).eq("id", id).select().single();
       if (error) throw error;
       return data;
     },
